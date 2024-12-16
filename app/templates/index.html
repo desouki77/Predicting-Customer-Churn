@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Churn Prediction</title>
+    <style>
+        /* Same styles as before */
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Customer Churn Prediction</h1>
+    </header>
+    <div class="container">
+        <form id="churnForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Upload Excel File:</label>
+                <input type="file" id="file" name="file" accept=".xls,.xlsx" required>
+            </div>
+            <button type="button" onclick="makePrediction()">Predict</button>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        async function makePrediction() {
+            const fileInput = document.getElementById('file');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please upload a file.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                const resultElement = document.getElementById('result');
+                resultElement.textContent = `Prediction Results: ${JSON.stringify(result)}`;
+            } else {
+                const error = await response.json();
+                alert(`Error: ${error.error}`);
+            }
+        }
+    </script>
+</body>
+</html>
